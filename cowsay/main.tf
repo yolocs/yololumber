@@ -59,7 +59,7 @@ resource "google_cloud_run_service" "cowsay" {
       service_account_name = google_service_account.cowsay.email
 
       containers {
-        image = "gcr.io/cshou-lumberjack-app/rundemo-b07b2bb657207519b0b9b53562604426@sha256:d5bdc317c361a43e9d13473a1d11230719347a2461af15f0034b3d90cb87779c"
+        image = "gcr.io/cshou-lumberjack-app/rundemo-b07b2bb657207519b0b9b53562604426@sha256:360eae3e0e2189047fc1f4700cd1675cc4bcc1cf4ecdd2467f7d81d2b7d63d8b"
         env {
           name  = "REDIS_HOST"
           value = google_redis_instance.cache.host
@@ -68,27 +68,27 @@ resource "google_cloud_run_service" "cowsay" {
           name  = "REDIS_PORT"
           value = google_redis_instance.cache.port
         }
-        # env {
-        #   name  = "DB_NAME"
-        #   value = "default"
-        # }
-        # env {
-        #   name  = "DB_USER"
-        #   value = "default"
-        # }
-        # env {
-        #   name = "DB_PASS"
-        #   value_from {
-        #     secret_key_ref {
-        #       name = google_secret_manager_secret.cowsay-default.secret_id
-        #       key  = "1"
-        #     }
-        #   }
-        # }
-        # env {
-        #   name  = "DB_SOCKET"
-        #   value = "/cloudsql/${google_sql_database_instance.cowsay.connection_name}"
-        # }
+        env {
+          name  = "DB_NAME"
+          value = "default"
+        }
+        env {
+          name  = "DB_USER"
+          value = "default"
+        }
+        env {
+          name = "DB_PASS"
+          value_from {
+            secret_key_ref {
+              name = google_secret_manager_secret.cowsay-default.secret_id
+              key  = "1"
+            }
+          }
+        }
+        env {
+          name  = "DB_SOCKET"
+          value = "/cloudsql/${google_sql_database_instance.cowsay.connection_name}"
+        }
       }
     }
   }
@@ -136,6 +136,14 @@ resource "google_sql_database_instance" "cowsay" {
 
   settings {
     tier = "db-f1-micro"
+    database_flags {
+      name  = "cloudsql.enable_pgaudit"
+      value = "on"
+    }
+    database_flags {
+      name  = "pgaudit.log"
+      value = "all"
+    }
   }
 }
 
@@ -174,9 +182,16 @@ resource "google_project_iam_member" "cowsay" {
   member = "serviceAccount:${google_service_account.cowsay.email}"
 }
 
+resource "google_project_iam_member" "cowsay-logging" {
+  role = "roles/logging.logWriter"
+  # Reference the cloud run service service account to grant access to the SQL.
+  member = "serviceAccount:${google_service_account.cowsay.email}"
+}
+
 resource "google_secret_manager_secret_iam_member" "cowsay-default" {
   secret_id = google_secret_manager_secret_version.cowsay-default.secret
   role      = "roles/secretmanager.secretAccessor"
   # Reference the cloud run service service account to grant access to the secret.
   member = "serviceAccount:${google_service_account.cowsay.email}"
 }
+

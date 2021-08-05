@@ -7,6 +7,7 @@ module "lumberjack_hub" {
     "user:cshou@google.com",
     "serviceAccount:gceenforcer@system.gserviceaccount.com",
     "serviceAccount:one-platform-tenant-manager@system.gserviceaccount.com",
+    "serviceAccount:service-193399633267@compute-system.iam.gserviceaccount.com",
   ]
 }
 
