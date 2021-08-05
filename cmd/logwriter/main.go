@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -97,15 +96,15 @@ func (s *server) handleLogMessage(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var rawLog []byte
-	if _, err := base64.StdEncoding.Decode(rawLog, msg.Message.Data); err != nil {
-		s.logger.Error("Invalid log format", zap.Error(err))
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	// var rawLog []byte
+	// if _, err := base64.StdEncoding.Decode(rawLog, msg.Message.Data); err != nil {
+	// 	s.logger.Error("Invalid log format", zap.Error(err))
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
 
 	var entry logging.Entry
-	if err := json.Unmarshal(rawLog, &entry); err != nil {
+	if err := json.Unmarshal(msg.Message.Data, &entry); err != nil {
 		s.logger.Error("Invalid log format", zap.Error(err))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -116,7 +115,7 @@ func (s *server) handleLogMessage(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := s.insertLog(req.Context(), rawLog, entry); err != nil {
+	if err := s.insertLog(req.Context(), msg.Message.Data, entry); err != nil {
 		s.logger.Error("Insert spanner failed", zap.Error(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -87,15 +87,15 @@ resource "google_cloud_run_service" "logwriter" {
       service_account_name = google_service_account.logwriter.email
 
       containers {
-        image = "gcr.io/cshou-lumberjack-hub/logwriter-f7687059a7faefdbb4cbb83397a3e4c4@sha256:e6bcd0b7aa130f6090e072eeaf50f856b859767c9e41448bdb1df99a77fd23bc"
+        image = "gcr.io/cshou-lumberjack-hub/logwriter-f7687059a7faefdbb4cbb83397a3e4c4@sha256:2ac6d1c4eea8ad585db220cc840778b0d7abd2361b850e06bdb9e15e48356843"
         env {
           name  = "SPANNER_DB"
           value = "projects/${var.project}/instances/${google_spanner_instance.log_storage.name}/databases/${google_spanner_database.log_database.name}"
         }
-        env {
-          name  = "INSERT_FAKE_LOGS"
-          value = "true"
-        }
+        # env {
+        #   name  = "INSERT_FAKE_LOGS"
+        #   value = "true"
+        # }
       }
     }
   }
