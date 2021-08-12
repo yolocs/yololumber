@@ -28,6 +28,11 @@ variable "hub_log_channel" {
   default = "log-channel-default"
 }
 
+variable "hub_audit_dataset" {
+  type    = string
+  default = "audit_dataset"
+}
+
 # Google provider
 provider "google" {
   project = var.project
