@@ -3,7 +3,6 @@ module "lumberjack_hub" {
 
   stack_name = "default"
   exempted_members = [
-    "serviceAccount:cowsay@cshou-lumberjack-app.iam.gserviceaccount.com",
     "user:cshou@google.com",
     "serviceAccount:gceenforcer@system.gserviceaccount.com",
     "serviceAccount:one-platform-tenant-manager@system.gserviceaccount.com",

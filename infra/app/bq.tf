@@ -12,7 +12,7 @@ resource "google_logging_project_sink" "app_bq_sink" {
   name        = "app-bq-${var.stack_name}"
   destination = "bigquery.googleapis.com/projects/${var.hub_project}/datasets/${var.hub_audit_dataset}"
   # Should probably create our own proto type and use that for filter.
-  filter                 = "logName : \"lumberjack-auditlog\""
+  filter                 = "logName : \"google.lumberjack.audit\""
   unique_writer_identity = true
   bigquery_options {
     use_partitioned_tables = true

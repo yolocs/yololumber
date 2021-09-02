@@ -33,7 +33,7 @@ resource "google_logging_project_sink" "app_audit_log_sink" {
   name        = "app-audit-sink-${var.stack_name}"
   destination = "pubsub.googleapis.com/projects/${var.hub_project}/topics/${var.hub_log_channel}"
   # Should probably create our own proto type and use that for filter.
-  filter                 = "logName : \"lumberjack-auditlog\""
+  filter                 = "logName : \"google.lumberjack.audit\""
   unique_writer_identity = true
 }
 
